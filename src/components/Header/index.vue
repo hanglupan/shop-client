@@ -7,8 +7,8 @@
           <p>尚品汇欢迎您！</p>
           <p>
             <span>请</span>
-            <a href="###">登录</a>
-            <a href="###" class="register">免费注册</a>
+            <router-link to="/login">登录</router-link>
+            <router-link to="/register" class="register">免费注册</router-link>
           </p>
         </div>
         <div class="typeList">
@@ -26,9 +26,9 @@
     <!--头部第二行 搜索区域-->
     <div class="bottom">
       <h1 class="logoArea">
-        <a class="logo" title="尚品汇" href="###" target="_blank">
+        <router-link class="logo" to="/home">
           <img src="./images/logo.png" alt="" />
-        </a>
+        </router-link>
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
@@ -36,8 +36,9 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
+            v-model="keyword"
           />
-          <button class="sui-btn btn-xlarge btn-danger" type="button">
+          <button class="sui-btn btn-xlarge btn-danger" type="button" @click="goSearch">
             搜索
           </button>
         </form>
@@ -48,7 +49,32 @@
 
 <script>
 export default {
+  data(){
+    return{
+      keyword:''
+    }
+  },
+  methods:{
+    goSearch(){
+      //路由传参:
+      // 第一种：字符串形式
+      // this.$router.push('/search/'+this.keyword+'?'+'k='+this.keyword.toUpperCase());
+      // 第二种：模板字符串
+      // this.$router.push(`/search/${this.keyword}?k=${this.keyword.toUpperCase()}`);
+      // 第三种：对象
+      // this.$router.push({
+      //   path:'/search',
+      //   query:this.keyword,
+      // });
 
+      this.$router.push({
+        //  /search/:keyword?k=:keyword.toUpperCase()
+        name:'search',
+        params:{keyword:this.keyword||undefined},
+        query:{k:this.keyword.toUpperCase()},
+      });
+    }
+  }
 };
 </script>
 
