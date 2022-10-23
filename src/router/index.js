@@ -9,6 +9,7 @@ import Search from '@/pages/Search'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 
+//重写路由的push和replace，在编程式导航时多次点击抛出异常警告（但是现在版本提升之后就不会在console里面显示警告了）
 let originPush=VueRouter.prototype.push;
 let originReplace=VueRouter.prototype.replace;
 
