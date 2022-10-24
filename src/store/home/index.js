@@ -1,17 +1,22 @@
 // home模块的小仓库
 
-import {reqCategoryList} from '@/api';
+import {reqCategoryList, reqGetBannerList} from '@/api';
 
 //state:仓库存储数据的地方
 const state={
     //根据返回的数据去初始化
     categoryList:[],
+    //轮播图的数据
+    bannerList:[],
 };
 //mutations:修改state的唯一手段
 const mutations={
     CATEGORYLIST(state,categoryList){
         state.categoryList=categoryList;
-    }
+    },
+    BANNERLIST(state,bannerList){
+        state.bannerList=bannerList;
+    },
 };
 // actions:提交mutation,处理异步
 const actions={
@@ -21,6 +26,13 @@ const actions={
         let res=await reqCategoryList();
         if(res.code===200){
             commit("CATEGORYLIST",res.data);
+        }
+    },
+    //获取首页轮播图数据
+    async getBannerList({commit}){
+        let res=await reqGetBannerList();
+        if(res.code===200){
+            commit('BANNERLIST',res.data);
         }
     }
 };

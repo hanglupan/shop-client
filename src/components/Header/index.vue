@@ -66,13 +66,15 @@ export default {
       //   path:'/search',
       //   query:this.keyword,
       // });
-
-      this.$router.push({
-        //  /search/:keyword?k=:keyword.toUpperCase()
-        name:'search',
-        params:{keyword:this.keyword||undefined},
-        query:{k:this.keyword.toUpperCase()},
-      });
+      if(this.$route.query){
+          this.$router.push({
+          //  /search/:keyword?k=:keyword.toUpperCase()
+          name:'search',
+          params:{keyword:this.keyword||undefined},//需要结合三级联动之后跳转到search页面携带的参数
+          query:this.$route.query,
+        });
+      }
+      
     }
   }
 };
