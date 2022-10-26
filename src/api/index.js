@@ -18,3 +18,5 @@ export const reqCategoryList=()=>requests({url:'/product/getBaseCategoryList', m
 export const reqGetBannerList=()=>mockAjax.get('/banner');
 // 获取floor数据
 export const reqFloorList=()=>mockAjax.get('/floor');
+//获取search数据
+export const reqGetSearchInfo=(params)=>requests({url:'/list',method:'post',data:params});//测试，传参至少传个{}空对象
