@@ -5,19 +5,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="carousel in bannerList" :key="carousel.id">
-              <img :src="carousel.imgUrl" /><!--src前加入：绑定，动态显示属性-->
-            </div>
-          </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-
-          <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
+        <Carousel :list='bannerList'/>
       </div>
       <div class="right">
         <div class="news">
@@ -94,34 +82,35 @@
 
 <script>
 import {mapState} from 'vuex';
-import Swiper from 'swiper';
+
 export default {
   mounted(){
     //派发action:通过Vuex发起ajax请求，将数据仓储在仓库中
     this.$store.dispatch('getBannerList');
     //由于dispacth涉及异步语句，导致v-for遍历的时候结构没有完全
-    setTimeout(()=>{
-        var mySwiper=new Swiper(document.querySelector('.swiper-container'),{
-        loop:true,// 循环模式选项
-        //如果需要分页器
-         pagination: {
-          el: '.swiper-pagination',
-          clickable:true,
-        },
-        //如果需要前进后退按钮
-        navigation:{
-          nextEl:'.swiper-button-next',
-          prevEl:'.swiper-button-prev',
-        }
-      });
-      console.log(mySwiper);
-    },2000);
+    // setTimeout(()=>{
+    //     var mySwiper=new Swiper(document.querySelector('.swiper-container'),{
+    //     loop:true,// 循环模式选项
+    //     //如果需要分页器
+    //      pagination: {
+    //       el: '.swiper-pagination',
+    //       clickable:true,
+    //     },
+    //     //如果需要前进后退按钮
+    //     navigation:{
+    //       nextEl:'.swiper-button-next',
+    //       prevEl:'.swiper-button-prev',
+    //     }
+    //   });
+    //   console.log(mySwiper);
+    // },1000);
   },
   computed:{
     ...mapState({
       bannerList:state=>state.home.bannerList
     })
   },
+
 };
 </script>
 

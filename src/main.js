@@ -14,7 +14,9 @@ import store from '@/store';
 import '@/mock/mockServe';
 //引swiper样式
 import 'swiper/css/swiper.css';
-
+//引入轮播图
+import Carousel from '@/components/Carousel';
+Vue.component(Carousel.name,Carousel);
 // //测试
 // import {reqCategoryList} from '@/api';
 // reqCategoryList();

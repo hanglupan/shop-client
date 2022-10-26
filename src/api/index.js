@@ -16,3 +16,5 @@ import mockAjax from './nockAjax';
 export const reqCategoryList=()=>requests({url:'/product/getBaseCategoryList', method:'get'});
 //获取轮播图接口banner
 export const reqGetBannerList=()=>mockAjax.get('/banner');
+// 获取floor数据
+export const reqFloorList=()=>mockAjax.get('/floor');
