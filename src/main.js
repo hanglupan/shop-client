@@ -12,7 +12,8 @@ Vue.component(TypeNav.name,TypeNav);
 import store from '@/store';
 //引入MockServe.js ---mock数据
 import '@/mock/mockServe';
-
+//引swiper样式
+import 'swiper/css/swiper.css';
 
 // //测试
 // import {reqCategoryList} from '@/api';
