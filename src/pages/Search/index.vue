@@ -11,38 +11,39 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!-- 三级分类的面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">{{searchParams.categoryName}}
+              <i @click="removeCategoryName">×</i>
+            </li>
+            <!-- 关键字的面包屑 -->
+            <li class="with-x" v-if="searchParams.keyword">{{searchParams.keyword}}
+              <i @click="removeKeyword">×</i>
+            </li>
+            <!-- 品牌的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">{{searchParams.trademark.split(":")[1]}}
+              <i @click="removeTrademark">×</i>
+            </li>
+            <!-- 售卖属性的面包屑 -->
+            <li class="with-x" v-for="(props,index) in searchParams.props" :key="index">{{props.split(':')[1]}}
+              <!-- 专门删掉index的那条 -->
+              <i @click="removeAttr(index)">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @trademarkInfo='trademarkInfo' @attrInfo='attrInfo'/>
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:isOne}">
+                  <a>综合<span v-show="isOne">↑</span></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:isTwo}">
+                  <a>价格<span v-show="isTwo">↑</span></a>
                 </li>
               </ul>
             </div>
@@ -138,7 +139,7 @@ import { mapGetters } from 'vuex';
           //平台售卖属性
           props:[],
           //排序
-          order:'', 
+          order:'2:desc', 
           //当前第几页
           pageNo:1,
           //每页个数
@@ -157,20 +158,104 @@ import { mapGetters } from 'vuex';
       // this.searchParams.keyword=this.$route.params.keyword;
       //合并对象
       Object.assign(this.searchParams,this.$route.query,this.$route.params);
+      // console.log(this.searchParams);
     },
     mounted(){
       this.getData();
     },
     computed:{
-      ...mapGetters(['goodsList'])
+      ...mapGetters(['goodsList']),
+      isOne(){
+        return this.searchParams.order.indexOf('1')!==-1;
+      },
+      isTwo(){
+        return this.searchParams.order.indexOf('2')!==-1;
+      }
     },
     methods:{
       // 向服务器发送请求获取search模块数据（根据参数的不同返回不同的数据进行展示）
       // 将请求封装成一个函数：当你需要调用的时候调用即可
       getData(){
         this.$store.dispatch('getSearchList',this.searchParams);
+      },
+      //删除三级分类面包屑
+      removeCategoryName(){//面包屑点击x，移出掉改面包屑
+        //带给服务器的参数都是可有可无的，如果仅仅置空还是会把相应的字段带给服务器
+        //若为underfined就不会把该字段带给服务器
+        this.searchParams.categoryName=undefined;
+        this.searchParams.category1Id=undefined;
+        this.searchParams.category2Id=undefined;
+        this.searchParams.category3Id=undefined;
+        //参数修改之后再次发送请求
+        this.getData();
+        //地址栏也需要修改
+        if(this.$route.params){//存在参数
+          this.$router.push({name:'search',params:this.$route.params});//编程式导航
+        }
+      },
+      //删除关键字面包屑
+      removeKeyword(){
+        this.searchParams.keyword=undefined;
+        //参数修改之后再次发送请求
+        this.getData();
+        // 通知兄弟组件header删除关键字
+        this.$bus.$emit('clearkeyword');
+        //进行路由的跳转
+        if(this.$route.query){
+          this.$router.push({name:'search',query:this.$route.query});
+        }
+      },
+      //自定义事件回调 从子组件获取的参数对父组件的参数进行修改
+      trademarkInfo(trademark){
+        // 整理参数 ‘ID:品牌名称’
+        this.searchParams.trademark=`${trademark.tmId}:${trademark.tmName}`;
+        // console.log(this.searchParams);
+        //再次发送请求
+        this.getData();
+      },
+      //删除品牌信息
+      removeTrademark(){
+        this.searchParams.trademark=undefined;
+        //参数修改之后再次发送请求
+        this.getData();
+        //此时路由不用跳转 因为params和query都没有改变
+      },
+      // 自定义事件回调
+      attrInfo(attr,attrValue){
+        // 整理参数 ‘ID:品牌名称’
+        let props=`${attr.attrId}:${attrValue}:${attr.attrName}`;
+        // 数组去重
+        if(this.searchParams.props.indexOf(props)===-1){//没有的话
+          this.searchParams.props.push(props);//push加入
+        }
+        // console.log(this.searchParams);
+        //再次发送请求
+        this.getData();
+      },
+      //删除平台售卖信息面面包屑
+      removeAttr(index){
+        //删除一条
+        this.searchParams.props.splice(index,1);
+        //参数修改之后再次发送请求
+        this.getData();
+        //此时路由不用跳转 因为params和query都没有改变
       }
-    }
+
+    },
+    watch:{
+      // 监听属性 监听路由信息 路由信息变化
+      $route(newValue,oldValue){
+        Object.assign(this.searchParams,this.$route.query,this.$route.params);
+        // console.log(this.searchParams);
+        // 再次发起ajax请求 此时的searchParams已经更改了
+        this.getData();
+        //每次请求完毕，三级id的参数应该清空，因为三级id有3个，互不影响，当点击一个三级之后再点击一级，两者参数同时会出现
+        this.searchParams.category1Id=undefined;
+        this.searchParams.category2Id=undefined;
+        this.searchParams.category3Id=undefined;
+      }
+    },
+    
   }
 </script>
 

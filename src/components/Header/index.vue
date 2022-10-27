@@ -54,6 +54,12 @@ export default {
       keyword:''
     }
   },
+  mounted(){
+    this.$bus.$on('clearkeyword',()=>{
+      //通过全局总线清除关键字
+      this.keyword='';
+    })
+  },
   methods:{
     goSearch(){
       //路由传参:

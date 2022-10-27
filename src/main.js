@@ -22,6 +22,10 @@ Vue.component(Carousel.name,Carousel);
 // reqCategoryList();
 new Vue({
   render: h => h(App),
+  //全局事件总线$bus配置
+  beforeCreate(){
+    Vue.prototype.$bus=this;
+  },
   //注册路由,kv省略掉v
   //注册路由信息：router同时拥有$route,$router属性
   router,
