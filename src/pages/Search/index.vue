@@ -39,11 +39,11 @@
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li :class="{active:isOne}">
-                  <a>综合<span v-show="isOne">↑</span></a>
+                <li :class="{active:isOne}" @click="changeOrder('1')">
+                  <a>综合<span v-show="isAsc">↑</span><span v-show="isDesc">↓</span></a>
                 </li>
-                <li :class="{active:isTwo}">
-                  <a>价格<span v-show="isTwo">↑</span></a>
+                <li :class="{active:isTwo}" @click="changeOrder('2')">
+                  <a>价格<span v-show="isAsc">↑</span><span v-show="isDesc">↓</span></a>
                 </li>
               </ul>
             </div>
@@ -77,35 +77,9 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 分页器 -->
+          <Pagination :pageNo="searchParams.pageNo" :pageSize="searchParams.pageSize" :total="total" :continues="5" @getPageNo='getPageNo'/>
+
         </div>
       </div>
     </div>
@@ -113,7 +87,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters,mapState } from 'vuex';
 
   import SearchSelector from './SearchSelector/SearchSelector'
   export default {
@@ -170,7 +144,17 @@ import { mapGetters } from 'vuex';
       },
       isTwo(){
         return this.searchParams.order.indexOf('2')!==-1;
-      }
+      },
+      isAsc(){
+        return this.searchParams.order.indexOf('asc')!==-1;
+      },
+      isDesc(){
+        return this.searchParams.order.indexOf('desc')!==-1;
+      },
+      //获取total总数据条数
+      ...mapState({
+        total:state=>state.search.searchList.total,
+      }),
     },
     methods:{
       // 向服务器发送请求获取search模块数据（根据参数的不同返回不同的数据进行展示）
@@ -239,6 +223,25 @@ import { mapGetters } from 'vuex';
         //参数修改之后再次发送请求
         this.getData();
         //此时路由不用跳转 因为params和query都没有改变
+      },
+      //排序的操作
+      changeOrder(flag){
+        //flag参数为综合还是价格
+        let [originFlag,originOrder]=this.searchParams.order.split(":");
+        let newOrder='';
+        if(flag===originFlag){//点击的是当前 排序改变
+          newOrder=`${originFlag}:${originOrder==='asc'?'desc':'asc'}`;
+        }else{//点击是另外一个 但是初始的排序都是降序
+          newOrder=`${flag}:'desc'`;
+        }
+        this.searchParams.order=newOrder;
+        this.getData();
+      },
+      //获取当前页数字
+      getPageNo(pageNo){
+        this.searchParams.pageNo=pageNo;
+        //再次发送请求
+        this.getData();
       }
 
     },

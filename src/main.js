@@ -17,6 +17,9 @@ import 'swiper/css/swiper.css';
 //引入轮播图
 import Carousel from '@/components/Carousel';
 Vue.component(Carousel.name,Carousel);
+//引入分页器
+import Pagination from '@/components/Pagination';
+Vue.component(Pagination.name,Pagination);
 // //测试
 // import {reqCategoryList} from '@/api';
 // reqCategoryList();
