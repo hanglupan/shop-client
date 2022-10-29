@@ -20,3 +20,5 @@ export const reqGetBannerList=()=>mockAjax.get('/banner');
 export const reqFloorList=()=>mockAjax.get('/floor');
 //获取search数据
 export const reqGetSearchInfo=(params)=>requests({url:'/list',method:'post',data:params});//测试，传参至少传个{}空对象
+//获取detail数据
+export const reqGoodsInfo=(skuId)=>requests({url:`/item/${skuId}`,method:'get'});
