@@ -98,7 +98,10 @@
                 <a href="javascript:" class="mins" @click="skuNum>1?skuNum--:skuNum=1">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <!-- 进行跳转前发送请求 把购买的产品信息通过请求的形式通知服务器 服务器进行存储 -->
+                <a @click="addShopCart">
+                  加入购物车
+                </a>
               </div>
             </div>
           </div>
@@ -382,6 +385,26 @@ export default {
       }else{//正数取整
         this.skuNum=parseInt(value);
       }
+    },
+    //加入购物车的回调函数
+    async addShopCart(){
+      // 发请求——将产品信息加入到数据库（服务器） 返回一个Promise
+      // 服务器存储成功——进行路由跳转传递参数
+      // 失败给提示
+      try {
+        await this.$store.dispatch('addOrUpdateCart',{
+          skuId:this.$route.params.skuid,//路由里面获取的
+          skuNum:this.skuNum,//这边直接有的
+        });//此时返回的是ok
+        //然后进行路由跳转,下面这种可以（我感觉一般的都是这样带的）
+        // this.$router.push({name:'addcartsucess',query:{skuInfo:this.skuInfo,skuNum:this.skuNum}});
+        // skuInfo:this.skuInfo由本地存储
+        sessionStorage.setItem("SKUINFO",JSON.stringify(this.skuInfo));//转化为json字符串的格式
+        this.$router.push({name:'addcartsuccess',query:{skuNum:this.skuNum}});
+      }catch(err){
+        alert(err.message);
+      }
+      
     },
   }
 };

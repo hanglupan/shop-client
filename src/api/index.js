@@ -22,3 +22,11 @@ export const reqFloorList=()=>mockAjax.get('/floor');
 export const reqGetSearchInfo=(params)=>requests({url:'/list',method:'post',data:params});//测试，传参至少传个{}空对象
 //获取detail数据
 export const reqGoodsInfo=(skuId)=>requests({url:`/item/${skuId}`,method:'get'});
+//添加或者更新购物车
+export const reqAddOrUpdate=(skuId,skuNum)=>requests({url:`/cart/addToCart/${skuId}/${skuNum}`,method:'post'});
+//获取购物车列表
+export const reqCartList=()=>requests({url:`/cart/cartList`,method:'get'});
+//删除购物车产品
+export const reqDeleteCartById=(skuId)=>requests({url:`/cart/deleteCart/${skuId}`,method:'delete'});
+//切换商品选中状态
+export const reqUpdateCheckCartById=(skuId,isChecked)=>requests({url:`/cart/checkCart/${skuId}/${isChecked}`,method:'get'});
