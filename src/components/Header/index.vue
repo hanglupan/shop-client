@@ -12,12 +12,12 @@
           </p>
           <p v-else>
             <a>{{userName}}</a>
-            <a class="register">退出登录</a>
+            <a class="register" @click="logout">退出登录</a>
           </p>
         </div>
         <div class="typeList">
-          <a href="###">我的订单</a>
-          <a href="###">我的购物车</a>
+          <router-link to='/center/myOrder'>我的订单</router-link>
+          <router-link to='/shopcart'>我的购物车</router-link>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
           <a href="###">企业采购</a>
@@ -89,7 +89,18 @@ export default {
           query:this.$route.query,
         });
       }
-      
+    },
+    logout(){
+      try{
+        //通知服务器退出登录
+        //清除项目中的数据userInfo,Token
+        //派发action,退出登录清除数据
+        this.$store.dispatch('userLogout');
+        this.$router.push('/home');
+      }catch(err){
+        alert(err.message);
+      }
+
     }
   }
 };
